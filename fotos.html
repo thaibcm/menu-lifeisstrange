@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Max's Diary — Mini Visualizador (5 páginas)</title>
+<style>
+  /* Reset mínimo */
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body,#app{height:100%}
+  body{
+    background:#0b0b0c;
+    color:#fff;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+  }
+
+  /* Container do diário */
+  .diary-wrap{
+    width: min(980px, 96vw);
+    aspect-ratio: 4/3;
+    position:relative;
+    background: linear-gradient(180deg, rgba(8,8,8,0.65), rgba(0,0,0,0.65));
+    border-radius:12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.7);
+    overflow:hidden;
+    padding:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  /* Imagem do diário */
+  .diary{
+    max-width:100%;
+    max-height:100%;
+    user-select:none;
+    -webkit-user-drag:none;
+    display:block;
+    border-radius:6px;
+  }
+
+  /* Hotspots invisíveis */
+  .hotspot{
+    position:absolute;
+    top:0;
+    bottom:0;
+    width:28%;
+    z-index:40;
+    background:transparent;
+    cursor:pointer;
+  }
+  .hotspot.left{ left:0; }
+  .hotspot.right{ right:0; }
+
+  /* Pequeno indicativo (opcional) */
+  .hotspot::after{
+    content:'';
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    width:36px;height:36px;border-radius:50%;
+    border:2px dashed rgba(255,255,255,0.02);
+    left:12px;
+  }
+  .hotspot.right::after{ left:auto; right:12px; }
+
+  /* Controles visuais */
+  .controls{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:10px;
+    z-index:60;
+    display:flex;
+    gap:12px;
+    align-items:center;
+    background: rgba(0,0,0,0.26);
+    padding:8px 12px;
+    border-radius:999px;
+    backdrop-filter: blur(4px);
+  }
+  .controls button{
+    background:transparent;border:0;color:#fff;padding:6px 10px;cursor:pointer;font-weight:700;
+  }
+  .page-index{font-weight:800}
+
+  .note{
+    position:absolute;
+    top:10px; left:12px; z-index:60;
+    font-size:13px; color:rgba(255,255,255,0.92);
+    background:rgba(0,0,0,0.28); padding:8px 10px; border-radius:8px;
+  }
+
+  .fs-toggle{ position:absolute; top:10px; right:12px; z-index:60; background:rgba(255,255,255,0.06); border-radius:8px; padding:6px 10px; cursor:pointer; color:#fff; font-weight:700; }
+
+  @media (max-width:640px){
+    .hotspot{ width:40% }
+    .controls{ gap:8px; bottom:6px }
+  }
+
+  /* Fonte (placeholder) - se quiser a fonte do jogo, coloque o arquivo em fonts/ e altere a URL */
+  @font-face{
+    font-family: "DuduCalligraphy";
+    src: local("Dudu Calligraphy"), local("DuduCalligraphy");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+</style>
+</head>
+<body>
+  <div class="diary-wrap" id="app" aria-label="Visualizador do diário da Max">
+    <div class="note">Use ← e → / toque nas laterais / arraste para virar páginas</div>
+    <button class="fs-toggle" id="fsToggle">Tela cheia</button>
+
+    <img id="diaryImg" class="diary" src="" alt="Página do diário" draggable="false" />
+
+    <div class="hotspot left" id="prevHot" aria-hidden="true"></div>
+    <div class="hotspot right" id="nextHot" aria-hidden="true"></div>
+
+    <div class="controls" aria-hidden="true">
+      <button id="firstBtn">⟸ Início</button>
+      <button id="prevBtn">◀︎</button>
+      <div class="page-index" id="pageIndex">0 / 0</div>
+      <button id="nextBtn">▶︎</button>
+      <button id="lastBtn">Fim ⟹</button>
+    </div>
+  </div>
+
+<script>
+/*
+  Visualizador 5 páginas - instruções:
+  - Coloque suas 5 imagens em: images/page_001.png ... images/page_005.png
+  - Abra index.html localmente no navegador.
+  - Navegação: clique nas laterais, teclas ← →, swipe em mobile, botões no rodapé.
+*/
+
+const TOTAL_PAGES = 5;
+const imgEl = document.getElementById('diaryImg');
+const pageIndexEl = document.getElementById('pageIndex');
+const prevHot = document.getElementById('prevHot');
+const nextHot = document.getElementById('nextHot');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const firstBtn = document.getElementById('firstBtn');
+const lastBtn = document.getElementById('lastBtn');
+const fsToggle = document.getElementById('fsToggle');
+
+let idx = 0;
+
+function imgPath(i){
+  const n = (i+86).toString();
+  return `MaxJournal/${n}.png`;
+}
+
+function updateUI(){
+  imgEl.src = imgPath(idx);
+  imgEl.alt = `Página ${idx+1} do diário`;
+  pageIndexEl.textContent = `${idx+1} / ${TOTAL_PAGES}`;
+}
+
+/* navegação */
+function prevPage(){ if(idx>0){ idx--; updateUI(); } }
+function nextPage(){ if(idx < TOTAL_PAGES - 1){ idx++; updateUI(); } }
+
+/* eventos */
+prevHot.addEventListener('click', prevPage);
+nextHot.addEventListener('click', nextPage);
+prevBtn.addEventListener('click', prevPage);
+nextBtn.addEventListener('click', nextPage);
+firstBtn.addEventListener('click', ()=>{ idx=0; updateUI(); });
+lastBtn.addEventListener('click', ()=>{ idx = TOTAL_PAGES - 1; updateUI(); });
+
+/* teclado */
+window.addEventListener('keydown', (e)=> {
+  if(e.key === 'ArrowLeft') prevPage();
+  if(e.key === 'ArrowRight') nextPage();
+});
+
+/* swipe mobile */
+let touchStartX = 0;
+imgEl.addEventListener('touchstart', (e)=> { touchStartX = e.changedTouches[0].screenX; }, {passive:true});
+imgEl.addEventListener('touchend', (e)=> {
+  const touchEndX = e.changedTouches[0].screenX;
+  const dx = touchEndX - touchStartX;
+  if(Math.abs(dx) < 30) return;
+  if(dx < 0) nextPage(); else prevPage();
+}, {passive:true});
+
+/* fullscreen */
+fsToggle.addEventListener('click', async ()=>{
+  try{
+    if(!document.fullscreenElement){
+      await document.documentElement.requestFullscreen();
+      fsToggle.textContent='Sair tela cheia';
+    } else {
+      await document.exitFullscreen();
+      fsToggle.textContent='Tela cheia';
+    }
+  }catch(err){ console.warn(err) }
+});
+
+imgEl.addEventListener('dragstart', e=> e.preventDefault());
+
+/* prefetch leve */
+function preload(i){
+  if(i<0 || i>=TOTAL_PAGES) return;
+  const im = new Image();
+  im.src = imgPath(i);
+}
+function prefetchNeighbors(){
+  preload(idx+1);
+  preload(idx-1);
+}
+function updateUIandPrefetch(){ updateUI(); prefetchNeighbors(); }
+
+updateUIandPrefetch();
+</script>
+<script src="script.js"></script>
+</body>
+</html>
