@@ -1,0 +1,107 @@
+/* Remove scroll */
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+@font-face {
+    font-family: 'Faraco';
+    src: url('../fonts/fonte.ttf');
+}
+@font-face {
+    font-family: 'dudu';
+    src: url('/fonts/Dudu_Calligraphy.ttf');
+}
+
+/* Fundo + layout base */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'dudu';
+    background: url("life_is_strange_img/imagem_tornado_na_cidade.webp") no-repeat center center fixed;
+    background-size: cover;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Área superior */
+#top {
+    margin-top: 20px;
+}
+
+/* Texto acima dos jogos */
+.titulo-temporadas {
+    font-size: 28px;
+    color: #fff;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(0,0,0,0.6);
+}
+
+/* Container dos jogos */
+.seasons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;        
+    padding: 10px 20px;
+}
+
+/* Retângulos das capas */
+.box,
+.season {
+    width: 200px;        
+    height: 240px;      
+    background: rgba(0,0,0,0.75);
+    border: 2px solid #444;
+    border-radius: 15px;   
+    overflow: hidden;
+    flex: 0 0 auto;        
+    transition: transform 0.3s ease;
+}
+
+/* Imagens nos retângulos */
+.box img,
+.season img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Efeito pulse */
+.box:hover,
+.season:hover {
+    animation: pulse 0.6s infinite;
+}
+
+@keyframes pulse {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.06); }
+    100% { transform: scale(1); }
+}
+
+/* Caixa de créditos */
+#creditos-box {
+    margin-top: 0px;
+}
+
+/* Título créditos */
+.titulo-creditos {
+    font-size: 26px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 0px;
+    text-shadow: 0 0 8px black;
+}
+
+/* Lista de nomes dos devs */
+.creditos-lista {
+    color: #eee;
+    font-size: 14px;      
+    line-height: 5px;   
+}
+
