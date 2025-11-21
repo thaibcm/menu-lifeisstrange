@@ -1,0 +1,144 @@
+
+@font-face {
+    font-family: 'Faraco';
+    src: url('../fonts/fonte.ttf');
+}
+@font-face {
+    font-family: 'dudu';
+    src: url('/fonts/Dudu_Calligraphy.ttf');
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    height: 100vh;
+    font-family: 'Faraco', sans-serif;
+    overflow: hidden; 
+}
+
+#video-fundo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1; 
+}
+
+/* Adiciona a 'película' escura para melhorar a leitura do texto */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); 
+    z-index: 1; 
+}
+
+/* CONTAINER INICIALMENTE INVISÍVEL */
+#main-content {
+    opacity: 0; 
+    transition: opacity 2s ease-in-out; 
+}
+
+.logo-title {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%); 
+    
+    font-family: 'Faraco', cursive;
+    font-size: 5rem;
+    color: #ffffff;
+    z-index: 15; 
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.logo-title span {
+    background-color: black;
+    color: white;
+    border: 8px solid white;
+    border-bottom-width: 40px;
+    padding: 8px 16px;
+    margin: 0 16px;
+    text-transform: uppercase;
+    text-shadow: none;
+    font-size: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.5);
+    transform: rotate(-3deg);
+    white-space: nowrap;
+}
+
+.menu-principal {
+    position: absolute;
+    top: 60%; 
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    
+    z-index: 10;
+}
+
+.menu-principal ul { list-style: none; }
+.menu-principal li { 
+    margin-bottom: 25px;
+    text-align: center; 
+}
+
+.menu-principal a {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 2rem; 
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    transition: all 0.2s ease-in-out;
+}
+
+@keyframes jitter {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(-1px, 1px); }
+    50% { transform: translate(1px, -1px); }
+    75% { transform: translate(-1px, -1px); }
+    100% { transform: translate(0, 0); }
+}
+
+.menu-principal a:hover {
+    color: #D62828; 
+    text-shadow: 0 0 10px #ffffff;
+    animation: jitter 0.2s infinite;
+}
+
+
+/* --- 3. ESTILO DO OVERLAY (CLIQUE PARA COMEÇAR) --- */
+
+#start-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* O overlay precisa estar acima de tudo (menos do mouse) */
+    z-index: 20; 
+   
+}
+#start-overlay p {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    font-family: 'dudu', sans-serif;
+    font-size: 1.2rem;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
+}
